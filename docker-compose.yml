@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+    php:
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        image: php:8.3-fpm-bookworm
+        stdin_open: true # docker run -i
+        tty: true # docker run -t
+        volumes:
+            - ./:/var/www/symfony
+            - ./var/log/:/var/www/symfony/var/log:delegated
+            - ./var/cache:/var/www/symfony/var/cache:delegated
+            - ./var/coverage:/opt/phpstorm-coverage
+            # mount the host system users in the container
+            - /etc/passwd:/etc/passwd:ro
+            - /etc/group:/etc/group:ro
+            # mount the users ssh configs in the container
+            - $HOME/.ssh:/home/$USER/.ssh:ro
+            - .composer:/home/$USER/.composer
+        user: ${UID}:${GID}
+        depends_on:
+            - mongo
+        links:
+            - mongo
+        networks:
+            - code-network
+
+    mongo:
+        image: mongo:4.0
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: dbuser
+            MONGO_INITDB_ROOT_PASSWORD: dbpw
+            MONGO_INITDB_DATABASE: test
+        networks:
+            - code-network
+networks:
+    code-network:
+        driver: bridge

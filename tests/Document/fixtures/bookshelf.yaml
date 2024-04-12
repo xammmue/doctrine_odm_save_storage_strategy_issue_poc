@@ -1,0 +1,35 @@
+App\Document\Bookshelf:
+    bookshelf:
+        __construct: [['@book_red', '@book_green', '@book_blue']]
+
+App\Document\Book:
+    book_red:
+        __construct:
+            name: 'red'
+            pages: ['@red_one']
+    book_green:
+        __construct:
+            name: 'green'
+            pages: ['@green_one']
+    book_blue:
+        __construct:
+            name: 'blue'
+            pages: ['@blue_one', '@blue_two']
+
+App\Document\Page:
+    red_one:
+        __construct:
+            pageNumber: 1
+            font: default
+    green_one:
+        __construct:
+            pageNumber: 1
+            font: fancy
+    blue_one:
+        __construct:
+            pageNumber: 1
+            font: beauty
+    blue_two:
+        __construct:
+            pageNumber: 2
+            font: beauty
